@@ -2,7 +2,7 @@
 Import-Module activedirectory
   
 #Store the data from ADUsers.csv in the $ADUsers variable
-$ADUsers = Import-csv .\ADUsers.csv
+$ADUsers = Import-csv .\List-F17.csv
 
 #Loop through each row containing user details in the CSV file 
 foreach ($User in $ADUsers)
@@ -14,7 +14,6 @@ foreach ($User in $ADUsers)
 	$Firstname 	= $User.firstname
 	$Lastname 	= $User.lastname
 	$OU 		= $User.ou #This field refers to the OU the user account is to be created in
-	$Domain     = $User.domain
 
 	#Check to see if the user already exists in AD
 	if (Get-ADUser -F {SamAccountName -eq $Username})
@@ -29,15 +28,18 @@ foreach ($User in $ADUsers)
         #Account will be created in the OU provided by the $OU variable read from the CSV file
 		New-ADUser `
             -SamAccountName $Username `
-            -UserPrincipalName $Username + $Domain `
+            -UserPrincipalName "$Username@49sd.uncc.edu" `
             -Name "$Firstname $Lastname" `
             -GivenName $Firstname `
             -Surname $Lastname `
             -Enabled $True `
             -DisplayName "$Lastname, $Firstname" `
             -AccountPassword (convertto-securestring $Password -AsPlainText -Force) `
-            -Identity $Username -ChangePasswordAtLogon $true `
-            Set-ADGroup -Identity $Group -SamAccountName $Username
-            -Path $OU   
+            -Path $OU
+            
+
+        Set-ADUser `
+        -Identity $Username -ChangePasswordAtLogon $true `
+        -UserPrincipalName "$Username@49sd.uncc.edu"
 	}
 }

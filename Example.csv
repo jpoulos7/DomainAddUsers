@@ -1,2 +1,2 @@
-firstname,lastname,username,password,ou,domain
-john,poulos,jpoulos,password,"CN=Users,DC=Domain,DC=local",domain.local
+firstname,lastname,username,password,ou
+john,doe,jdoe,password,"OU=Users,DC=Domain,DC=local"
